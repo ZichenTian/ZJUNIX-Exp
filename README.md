@@ -1,5 +1,8 @@
 # ZJUNIX
 
+##来源
+本仓库来源于ZJUNIX仓库。本仓库主要是在ZJUNIX的基础上，进行代码的增添与删改，扩充其功能。原版readme如下：
+
 ## 简介
 
 ![ZJUNIX Experiments](https://img.shields.io/badge/ZJUNIX-Experiments-blue.svg)
