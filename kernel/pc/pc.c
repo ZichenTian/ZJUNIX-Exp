@@ -64,13 +64,22 @@ void pc_schedule(unsigned int status, unsigned int cause, context* pt_context) {
     // Save context
     copy_context(pt_context, &(pcb[curr_proc].context));
     int i;
+    int last_proc = curr_proc;
     for (i = 0; i < 8; i++) {
         curr_proc = (curr_proc + 1) & 7;
-        if (pcb[curr_proc].ASID >= 0)
+        if (pcb[curr_proc].ASID >= 0 && pcb[curr_proc].state == TASK_READY)
+        {
+            if(curr_proc == last_proc)
+            {
+                break;
+            }
+            pcb[curr_proc].state = TASK_RUNNING;
+            pcb[last_proc].state = TASK_READY;
             break;
+        }
     }
     if (i == 8) {
-        kernel_puts("Error: PCB[0] is invalid!\n", 0xfff, 0);
+        kernel_puts("Error: PCB[0] is invalid!\n", 0xfff, 0);   //问一下助教，这个0号任务到底是干嘛的
         while (1)
             ;
     }
@@ -95,11 +104,13 @@ void pc_create(int asid, void (*func)(), unsigned int init_sp, unsigned int init
     pcb[asid].context.gp = init_gp;
     kernel_strcpy(pcb[asid].name, name);
     pcb[asid].ASID = asid;
+    pcb[asid].state = TASK_READY;
 }
 
 void pc_kill_syscall(unsigned int status, unsigned int cause, context* pt_context) {
     if (curr_proc != 0) {
         pcb[curr_proc].ASID = -1;
+        pcb[curr_proc].state = TASK_KILLED;
         pc_schedule(status, cause, pt_context);
     }
 }
@@ -108,6 +119,7 @@ int pc_kill(int proc) {
     proc &= 7;
     if (proc != 0 && pcb[proc].ASID >= 0) {
         pcb[proc].ASID = -1;
+        pcb[proc].state = TASK_KILLED;
         return 0;
     } else if (proc == 0)
         return 1;
@@ -119,12 +131,23 @@ task_struct* get_curr_pcb() {
     return &pcb[curr_proc];
 }
 
+const char State_String[6][15] = {
+    "ready",
+    "running",
+    "blocked",
+    "suspend",
+    "killed",
+    "not created"
+};
+
 int print_proc() {
     int i;
     kernel_puts("PID name\n", 0xfff, 0);
     for (i = 0; i < 8; i++) {
         if (pcb[i].ASID >= 0)
-            kernel_printf(" %x  %s\n", pcb[i].ASID, pcb[i].name);
+        {
+            kernel_printf(" %x  %s  %s\n", pcb[i].ASID, pcb[i].name, State_String[pcb[i].state]);
+        }
     }
     return 0;
 }

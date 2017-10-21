@@ -16,12 +16,23 @@ typedef struct {
     unsigned int ra;
 } context;
 
+typedef enum{       //任务状态，defined by tzc
+    TASK_READY = 0,
+    TASK_RUNNING,
+    TASK_BLOCKED,
+    TASK_SUSPEND,
+    TASK_KILLED,
+    TASK_NOT_CREATED
+}task_state;
+
 typedef struct {
     context context;
     int ASID;
     unsigned int counter;
     char name[32];
     unsigned long start_time;
+    task_state state;
+
 } task_struct;
 
 typedef union {
