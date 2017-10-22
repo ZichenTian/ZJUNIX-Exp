@@ -50,5 +50,7 @@ void pc_kill_syscall(unsigned int status, unsigned int cause, context* pt_contex
 int pc_kill(int proc);
 task_struct* get_curr_pcb();
 int print_proc();
+void wakeup_proc(int proc);
+void block_proc(int proc);
 
 #endif  // !_ZJUNIX_PC_H

@@ -11,7 +11,8 @@ typedef struct sem_wait_node{
 //信号量
 typedef struct sem{
     unsigned int id;        //信号量ID，内核通过ID寻找到信号量
-    unsigned int count;     //信号量的数量
+    unsigned int num;     //信号量的数量
+    unsigned int max_num;   //信号量容量
     unsigned char state;    //信号量是否已经被注册， SEM_USED or SEM_UNUSED
     sem_wait_node_typedef* wait_list;    //等待列表
 }sem_typedef;

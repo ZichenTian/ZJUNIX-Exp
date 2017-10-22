@@ -74,7 +74,8 @@ void pc_schedule(unsigned int status, unsigned int cause, context* pt_context) {
                 break;
             }
             pcb[curr_proc].state = TASK_RUNNING;
-            pcb[last_proc].state = TASK_READY;
+            if(pcb[last_proc].state == TASK_RUNNING)    //只有正在运行的才会返回就绪列表
+                pcb[last_proc].state = TASK_READY;      //如果进程在运行状态下被阻塞，则维持阻塞状态
             break;
         }
     }
@@ -150,4 +151,22 @@ int print_proc() {
         }
     }
     return 0;
+}
+
+//added by ZichenTian
+void wakeup_proc(int proc)
+{
+    pcb[proc].state = TASK_READY;
+}
+
+//added by ZichenTian
+void block_proc(int proc)
+{
+    pcb[proc].state = TASK_BLOCKED;
+}
+
+//added by ZichenTian
+task_state get_proc_state(int proc)
+{
+    return pcb[proc].state;
 }
