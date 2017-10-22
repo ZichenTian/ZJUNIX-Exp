@@ -170,3 +170,8 @@ task_state get_proc_state(int proc)
 {
     return pcb[proc].state;
 }
+
+int get_curr_proc_num(void)
+{
+    return curr_proc;
+}

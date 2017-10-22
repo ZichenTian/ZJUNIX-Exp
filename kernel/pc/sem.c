@@ -5,6 +5,7 @@
 #include <zjunix/syscall.h>
 #include <zjunix/slab.h>
 #include <zjunix/type.h>
+#include <zjunix/pc.h>
 
 sem_typedef sem[SEM_MAX_NUM];       //信号量实体
 unsigned int  sem_num;      //已注册的信号量的数量
@@ -166,14 +167,12 @@ int task_sem(int id)
     else
     {
         sem_wait_node_typedef* p = (sem_wait_node_typedef*)kmalloc(sizeof(sem_wait_node_typedef));
-        int this_proc = curr_proc;  //进行此系统调用的进程号
+        int this_proc = get_curr_proc_num();  //进行此系统调用的进程号
         p->next = sem[id].wait_list;    //加入等待列表
         sem[id].wait_list = p;
         block_proc(this_proc);
-
-        pc_schedule(1,2,3);     //函数还需要处理一下
-
         enable_interrupts();    //退出关键段
+        while(get_proc_state(this_proc) == TASK_BLOCKED);   //等待调度器调度走这个进程
         return 0;
         
         

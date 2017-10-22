@@ -52,5 +52,7 @@ task_struct* get_curr_pcb();
 int print_proc();
 void wakeup_proc(int proc);
 void block_proc(int proc);
+task_state get_proc_state(int proc);
+int get_curr_proc_num(void);
 
 #endif  // !_ZJUNIX_PC_H
