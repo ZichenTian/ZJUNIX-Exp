@@ -1,9 +1,9 @@
 #include "sem.h"
 
 #include <driver/vga.h>
-#include <intr.h>
 #include <zjunix/syscall.h>
-#include <zjunix/utils.h>
+#include <zjunix/slab.h>
+#include <zjunix/type.h>
 
 sem_management_typedef sem_m;
 
@@ -36,7 +36,8 @@ int create_sem(void)
             //将要分配的信号量初始化
             sem_m.sem[i].id = i;
             sem_m.sem[i].count = 0;
-            sem_m.sem[i].wait_list = NULL;
+            sem_m.sem[i].wait_list.cnt = 0;
+            sem_m.sem[i].wait_list.first = NULL;
             return i;
         }
     }
